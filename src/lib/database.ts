@@ -6,6 +6,7 @@ export const db = {
   // Profile operations
   profiles: {
     async get(userId: string) {
+      if (!supabase) throw new Error('Supabase client not initialized')
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -43,6 +44,7 @@ export const db = {
   // Projects operations
   projects: {
     async getAll(userId: string) {
+      if (!supabase) throw new Error('Supabase client not initialized')
       const { data, error } = await supabase
         .from('projects')
         .select('*')
@@ -54,6 +56,7 @@ export const db = {
     },
 
     async getById(id: string) {
+      if (!supabase) throw new Error('Supabase client not initialized')
       const { data, error } = await supabase
         .from('projects')
         .select('*')
@@ -100,6 +103,7 @@ export const db = {
   // Subscription plans operations
   subscriptionPlans: {
     async getAll() {
+      if (!supabase) throw new Error('Supabase client not initialized')
       const { data, error } = await supabase
         .from('subscription_plans')
         .select('*')
@@ -111,6 +115,7 @@ export const db = {
     },
 
     async getById(id: string) {
+      if (!supabase) throw new Error('Supabase client not initialized')
       const { data, error } = await supabase
         .from('subscription_plans')
         .select('*')
@@ -125,6 +130,7 @@ export const db = {
   // Notifications operations
   notifications: {
     async getAll(userId: string, limit = 50) {
+      if (!supabase) throw new Error('Supabase client not initialized')
       const { data, error } = await supabase
         .from('notifications')
         .select('*')
@@ -137,6 +143,7 @@ export const db = {
     },
 
     async getUnreadCount(userId: string) {
+      if (!supabase) throw new Error('Supabase client not initialized')
       const { count, error } = await supabase
         .from('notifications')
         .select('*', { count: 'exact', head: true })
@@ -186,6 +193,7 @@ export const db = {
   // Organizations operations
   organizations: {
     async getAll(userId: string) {
+      if (!supabase) throw new Error('Supabase client not initialized')
       const { data, error } = await (supabase as any)
         .from('organization_members')
         .select(`
@@ -198,6 +206,7 @@ export const db = {
     },
 
     async getById(id: string) {
+      if (!supabase) throw new Error('Supabase client not initialized')
       const { data, error } = await supabase
         .from('organizations')
         .select('*')

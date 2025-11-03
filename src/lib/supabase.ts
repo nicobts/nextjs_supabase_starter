@@ -18,9 +18,10 @@ export const supabase = supabaseUrl && supabaseAnonKey
     })
   : null as any // Placeholder for build time
 
-// Auth helper functions
+// Auth helper functions - handle null supabase client
 export const auth = {
   signUp: async (email: string, password: string) => {
+    if (!supabase) return { data: null, error: { message: 'Supabase client not initialized' } }
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -29,6 +30,7 @@ export const auth = {
   },
 
   signIn: async (email: string, password: string) => {
+    if (!supabase) return { data: null, error: { message: 'Supabase client not initialized' } }
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -37,21 +39,25 @@ export const auth = {
   },
 
   signOut: async () => {
+    if (!supabase) return { error: { message: 'Supabase client not initialized' } }
     const { error } = await supabase.auth.signOut()
     return { error }
   },
 
   getUser: async () => {
+    if (!supabase) return { user: null, error: { message: 'Supabase client not initialized' } }
     const { data: { user }, error } = await supabase.auth.getUser()
     return { user, error }
   },
 
   getSession: async () => {
+    if (!supabase) return { session: null, error: { message: 'Supabase client not initialized' } }
     const { data: { session }, error } = await supabase.auth.getSession()
     return { session, error }
   },
 
   onAuthStateChange: (callback: (event: string, session: any) => void) => {
+    if (!supabase) return { data: { subscription: { unsubscribe: () => {} } } }
     return supabase.auth.onAuthStateChange(callback)
   }
 }
