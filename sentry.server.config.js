@@ -1,3 +1,5 @@
+/*
+// Commented out for testing phase - Sentry integration disabled
 import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
@@ -51,3 +53,7 @@ Sentry.init({
     return event;
   },
 });
+*/
+
+// Placeholder Sentry server initialization for testing phase
+console.log('Sentry server integration disabled for testing phase')

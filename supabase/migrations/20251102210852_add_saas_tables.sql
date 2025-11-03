@@ -1,3 +1,51 @@
+-- Create profiles table (extends Supabase auth.users) - only if it doesn't exist
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'profiles') THEN
+    CREATE TABLE public.profiles (
+      id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
+      email TEXT,
+      full_name TEXT,
+      avatar_url TEXT,
+      website TEXT,
+      bio TEXT,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+    );
+  END IF;
+END $$;
+
+-- Create organizations table - only if it doesn't exist
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'organizations') THEN
+    CREATE TABLE public.organizations (
+      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+      name TEXT NOT NULL,
+      slug TEXT NOT NULL,
+      description TEXT,
+      logo_url TEXT,
+      website TEXT,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+      updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+    );
+  END IF;
+END $$;
+
+-- Create organization_members table - only if it doesn't exist
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'organization_members') THEN
+    CREATE TABLE public.organization_members (
+      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+      organization_id UUID REFERENCES public.organizations(id) ON DELETE CASCADE,
+      user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+      role TEXT DEFAULT 'member' CHECK (role IN ('owner', 'admin', 'member')),
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+    );
+  END IF;
+END $$;
+
 -- Create projects table (user workspaces) - only if it doesn't exist
 DO $$
 BEGIN
@@ -7,7 +55,7 @@ BEGIN
       name TEXT NOT NULL,
       slug TEXT NOT NULL,
       description TEXT,
-      organization_id UUID,
+      organization_id UUID REFERENCES public.organizations(id) ON DELETE SET NULL,
       owner_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
       is_public BOOLEAN DEFAULT FALSE,
       settings JSONB DEFAULT '{}',
