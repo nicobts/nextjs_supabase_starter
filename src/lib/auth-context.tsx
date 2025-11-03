@@ -21,10 +21,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // Only initialize auth if supabase is available
+    if (!auth.getSession) {
+      setLoading(false)
+      return
+    }
+
     // Get initial session
     auth.getSession().then(({ session }) => {
       setSession(session)
       setUser(session?.user ?? null)
+      setLoading(false)
+    }).catch(() => {
       setLoading(false)
     })
 
@@ -37,7 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     )
 
-    return () => subscription.unsubscribe()
+    return () => subscription?.unsubscribe?.()
   }, [])
 
   const signIn = async (email: string, password: string) => {

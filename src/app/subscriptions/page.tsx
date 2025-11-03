@@ -26,7 +26,10 @@ export default function SubscriptionsPage() {
 
   useEffect(() => {
     const loadSubscriptionData = async () => {
-      if (!user) return
+      if (!user) {
+        setLoading(false)
+        return
+      }
 
       try {
         // Load all plans
@@ -52,7 +55,44 @@ export default function SubscriptionsPage() {
         }
       } catch (error) {
         console.error('Error loading subscription data:', error)
-        toast.error('Failed to load subscription data')
+        // If Supabase is not configured, show a message instead of error
+        if (error instanceof Error && error.message.includes('Supabase client not initialized')) {
+          toast.info('Database not configured - showing demo data')
+          // Set demo data for testing
+          setAllPlans([
+            {
+              id: 'free',
+              name: 'Free',
+              price_monthly: 0,
+              features: ['Basic features', 'Community support'],
+              limits: { projects: 3, users: 1 }
+            },
+            {
+              id: 'pro',
+              name: 'Pro',
+              price_monthly: 29,
+              features: ['Advanced features', 'Priority support'],
+              limits: { projects: -1, users: 10 }
+            }
+          ])
+          setCurrentPlan({
+            id: 'free',
+            name: 'Free',
+            price_monthly: 0,
+            features: ['Basic features', 'Community support'],
+            limits: { projects: 3, users: 1 }
+          })
+          setCurrentSubscription({
+            id: 'demo-sub',
+            plan_id: 'free',
+            status: 'active',
+            current_period_start: new Date().toISOString(),
+            current_period_end: null,
+            created_at: new Date().toISOString()
+          })
+        } else {
+          toast.error('Failed to load subscription data')
+        }
       } finally {
         setLoading(false)
       }
