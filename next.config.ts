@@ -1,42 +1,43 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Enable Next.js 16 Cache Components
-  cacheComponents: true,
-
-  // Enable Turbopack filesystem caching for faster rebuilds
-  experimental: {
-    turbopackFileSystemCacheForDev: true,
-  },
-
-  // Allow cross-origin requests from network interfaces
-  allowedDevOrigins: ['localhost', '127.0.0.1', '192.168.1.117'],
+  // Production-ready configuration for Vercel deployment
 
   // Image optimization settings
   images: {
-    // Allow local images with proper security
-    localPatterns: [
+    // Allow images from common domains using remotePatterns (replaces deprecated domains)
+    remotePatterns: [
       {
-        pathname: '/**',
-        search: '',
+        protocol: 'https',
+        hostname: '**',
       },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      }
     ],
     // Optimize image loading
-    minimumCacheTTL: 14400, // 4 hours
+    minimumCacheTTL: 86400, // 24 hours for production
   },
 
-  // Enable bundle analyzer in development (optional)
-  ...(process.env.ANALYZE === 'true' && {
+  // Environment-specific configuration
+  ...(process.env.NODE_ENV === 'production' && {
+    // Production optimizations
+    compiler: {
+      removeConsole: process.env.NODE_ENV === 'production',
+    },
+  }),
+
+  // Enable bundle analyzer in development only (optional)
+  ...(process.env.ANALYZE === 'true' && process.env.NODE_ENV === 'development' && {
     webpack: (config: any) => {
-      if (process.env.NODE_ENV === 'development') {
-        const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-        config.plugins.push(
-          new BundleAnalyzerPlugin({
-            analyzerMode: 'server',
-            openAnalyzer: true,
-          })
-        );
-      }
+      const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+      config.plugins.push(
+        new BundleAnalyzerPlugin({
+          analyzerMode: 'server',
+          openAnalyzer: true,
+        })
+      );
       return config;
     },
   }),

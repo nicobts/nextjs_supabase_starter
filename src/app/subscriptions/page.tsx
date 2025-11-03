@@ -28,21 +28,24 @@ export default function SubscriptionsPage() {
       try {
         // Load all plans
         const plans = await db.subscriptionPlans.getAll()
-        setAllPlans(plans)
+        console.log('Loaded plans:', plans) // Debug log
+        setAllPlans(plans || [])
 
         // For now, we'll simulate a free plan subscription
         // In a real app, you'd fetch the user's actual subscription
-        const freePlan = plans.find(p => p.name === 'Free')
-        if (freePlan) {
-          setCurrentPlan(freePlan)
-          setCurrentSubscription({
-            id: 'free-sub',
-            plan_id: freePlan.id,
-            status: 'active',
-            current_period_start: new Date().toISOString(),
-            current_period_end: null,
-            created_at: new Date().toISOString()
-          })
+        if (plans && plans.length > 0) {
+          const freePlan = (plans as any[]).find((p) => p.name === 'Free')
+          if (freePlan) {
+            setCurrentPlan(freePlan)
+            setCurrentSubscription({
+              id: 'free-sub',
+              plan_id: freePlan.id,
+              status: 'active',
+              current_period_start: new Date().toISOString(),
+              current_period_end: null,
+              created_at: new Date().toISOString()
+            })
+          }
         }
       } catch (error) {
         console.error('Error loading subscription data:', error)

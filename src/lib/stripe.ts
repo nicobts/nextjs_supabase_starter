@@ -1,3 +1,5 @@
+/*
+// Commented out for testing phase - Stripe integration disabled
 import { loadStripe } from '@stripe/stripe-js'
 
 // Initialize Stripe with your publishable key
@@ -152,3 +154,13 @@ export const formatPrice = (price: number, interval: string = 'month') => {
     currency: 'USD',
   }).format(price) + (interval === 'year' ? '/year' : '/month')
 }
+*/
+
+// Placeholder exports for testing phase
+export const stripePromise = null
+export const STRIPE_CONFIG = {}
+export const stripeHelpers = {}
+export const SUBSCRIPTION_PLANS = {}
+export const getPlanById = () => null
+export const getAllPlans = () => []
+export const formatPrice = () => '$0/month'

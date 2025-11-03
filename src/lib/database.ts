@@ -22,7 +22,7 @@ export const db = {
     },
 
     async update(userId: string, updates: Database['public']['Tables']['profiles']['Update']) {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('profiles')
         .update(updates)
         .eq('id', userId)
@@ -34,7 +34,7 @@ export const db = {
     },
 
     async create(profile: Database['public']['Tables']['profiles']['Insert']) {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('profiles')
         .insert(profile)
         .select()
@@ -70,7 +70,7 @@ export const db = {
     },
 
     async create(project: Database['public']['Tables']['projects']['Insert']) {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('projects')
         .insert(project)
         .select()
@@ -81,7 +81,7 @@ export const db = {
     },
 
     async update(id: string, updates: Database['public']['Tables']['projects']['Update']) {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('projects')
         .update(updates)
         .eq('id', id)
@@ -153,7 +153,7 @@ export const db = {
     },
 
     async markAsRead(id: string) {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('notifications')
         .update({ is_read: true })
         .eq('id', id)
@@ -165,7 +165,7 @@ export const db = {
     },
 
     async markAllAsRead(userId: string) {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('notifications')
         .update({ is_read: true })
         .eq('user_id', userId)
@@ -177,7 +177,7 @@ export const db = {
     },
 
     async create(notification: Database['public']['Tables']['notifications']['Insert']) {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('notifications')
         .insert(notification)
         .select()
@@ -191,7 +191,7 @@ export const db = {
   // Organizations operations
   organizations: {
     async getAll(userId: string) {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('organization_members')
         .select(`
           organizations (*)
@@ -199,7 +199,7 @@ export const db = {
         .eq('user_id', userId)
 
       if (error) throw error
-      return data?.map(item => item.organizations) || []
+      return data?.map((item: any) => item.organizations) || []
     },
 
     async getById(id: string) {
@@ -214,7 +214,7 @@ export const db = {
     },
 
     async create(organization: Database['public']['Tables']['organizations']['Insert']) {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('organizations')
         .insert(organization)
         .select()
